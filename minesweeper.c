@@ -231,7 +231,7 @@ bool cursor_move(GameState gs, DIRECTION dir) {
     size_t cursor_x = gs->cursor_x + dir_off[dir][X_COORD];
     size_t cursor_y = gs->cursor_y + dir_off[dir][Y_COORD];
     
-    if (cursor_x > gs->width || cursor_y > gs->height) return false;
+    if (cursor_x >= gs->width || cursor_y >= gs->height) return false;
 
     gs->cursor_x = cursor_x;
     gs->cursor_y = cursor_y;
@@ -302,9 +302,12 @@ bool display_mines(GameState gs, bool won) {
                 gs->flag[y][x] = false;
                 gs->board[y][x] = CLEARED;
             }
+            else if (!won && gs->flag[y][x] && gs->board[y][x] == MINE) {
+                gs->flag[y][x] = false;
+            }
             print_board(gs); 
             refresh();
-            usleep(2000);
+            if (gs->board[y][x] == MINE || gs->board[y][x] == CLEARED) usleep(1000000 / gs->mines);
         }
     }
     return true;
